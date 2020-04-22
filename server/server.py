@@ -1,11 +1,10 @@
 import mysql.connector
-
-def  mysqlConnection():
+def  mysqlConnection(database):
     db_connection = mysql.connector.connect(
     host="localhost",
     user="root",
     passwd="Admin@1234",
-    database = "shubham"
+    database = database
     )
     print(db_connection)
     return(db_connection)
@@ -69,5 +68,5 @@ def deleteTable():
 # readSingleTable()
 
 # updatTable()
-readTable()
+# readTable()
 # deleteTable()

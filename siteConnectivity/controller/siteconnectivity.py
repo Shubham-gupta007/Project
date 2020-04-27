@@ -6,13 +6,14 @@ import collections
 import time
 
 
-# Create table sites_collection(id int NOT NULL AUTO_INCREMENT, dns_name varchar(128), status varchar(20), state varchar(20), created_date DATE, updated_date DATE, error_code int, error_message varchar(200), ipaddress varchar(200), PRIMARY KEY(id));
-# Create table sites_collection(id int NOT NULL AUTO_INCREMENT, dns_name varchar(128), status varchar(150), state varchar(150), created_date varchar(150), updated_date varchar(150), error_code varchar(150), error_message varchar(200), ipaddress varchar(200), PRIMARY KEY(id));
+# ALTER TABLE sites_collection ADD packet_transmit int(10),ADD packet_receive int(10),ADD packet_loss_count int(10),ADD packet_loss_rate int(10),ADD rtt_min int(10),ADD rtt_avg int(10),ADD rtt_max int(10),ADD rtt_mdev int(10);
+# Create table sites_collection(id int NOT NULL AUTO_INCREMENT, dns_name varchar(128), status varchar(20), state varchar(20), created_date DATE, updated_date DATE, code int, error_message varchar(200), ipaddress varchar(200), PRIMARY KEY(id));
+# Create table sites_collection(id int NOT NULL AUTO_INCREMENT, dns_name varchar(128), status varchar(150), state varchar(150), created_date varchar(150), updated_date varchar(150), code varchar(150), error_message varchar(200), ipaddress varchar(200), PRIMARY KEY(id));
 # def createTable():
 #     conn = server.mysqlConnection()
 #     print("conn",conn)
 #     myscursor = conn.cursor()
-#     myscursor.execute("Create table sites_collection(id int NOT NULL AUTO_INCREMENT, dns_name varchar(128), status varchar(150), state varchar(150), created_date INT(11) NOT NULL DEFAULT '0', updated_date INT(11) NOT NULL DEFAULT '0', error_code int, error_message varchar(200), ipaddress varchar(200), PRIMARY KEY(id))")
+#     myscursor.execute("Create table sites_collection(id int NOT NULL AUTO_INCREMENT, dns_name varchar(128), status varchar(150), state varchar(150), created_date INT(11) NOT NULL DEFAULT '0', updated_date INT(11) NOT NULL DEFAULT '0', code int, error_message varchar(200), ipaddress varchar(200), PRIMARY KEY(id))")
 
 
 @app.route('/add', methods=['POST'])
@@ -24,7 +25,7 @@ def addSiteName():
         _state = _json['state']
         _createddate = _json['created_date']
         _updateddate = _json['updated_date']
-        _errorcode = _json['error_code']
+        _errorcode = _json['code']
         _errormsg = _json['error_message']
         _ipaddress = _json['ipaddress']
 
@@ -33,7 +34,7 @@ def addSiteName():
         _state = "active"
         # if _dnsname and _status and _state and _createddate and _updateddate and _errorcode and _errormsg and _ipaddress and request.method == 'POST':
         if _dnsname and request.method == 'POST':
-            sqlQuery = "INSERT INTO sites_collection(dns_name, status, state, created_date, updated_date, error_code, error_message, ipaddress) VALUES(%s, %s, %s, %s, %s, %s, %s, %s);"
+            sqlQuery = "INSERT INTO sites_collection(dns_name, status, state, created_date, updated_date, code, error_message, ipaddress) VALUES(%s, %s, %s, %s, %s, %s, %s, %s);"
             bindData = (_dnsname, _status, _state, _createddate, _updateddate, _errorcode, _errormsg, _ipaddress)
             conn = server.mysqlConnection('shubham')
             cursor = conn.cursor()
@@ -68,10 +69,10 @@ def showAllsites():
             d['state'] = row[3]
             d['created_date'] = row[4]
             d['updated_date'] = row[5]
-            d['error_code'] = row[6]
+            d['code'] = row[6]
             d['error_message'] = row[6]
             d['ipaddress'] = row[8]
-            # d['error_code'] = row[4]
+            # d['code'] = row[4]
             rowarray_list.append(d)
         response = jsonify(rowarray_list)
         response.status_code = 200
@@ -103,7 +104,7 @@ def showSinglesite():
             d['state'] = siterows[3]
             d['created_date'] = siterows[4]
             d['updated_date'] = siterows[5]
-            d['error_code'] = siterows[6]
+            d['code'] = siterows[6]
             d['error_message'] = siterows[7]
             d['ipaddress'] = siterows[8]
             rowarray_list.append(d)
@@ -153,7 +154,7 @@ def updatesite():
             # d['state'] = siterows[3]
             # d['created_date'] = siterows[4]
             # d['updated_date'] = siterows[5]
-            # d['error_code'] = siterows[6]
+            # d['code'] = siterows[6]
             # d['error_message'] = siterows[7]
             # d['ipaddress'] = siterows[8]
             # rowarray_list.append(d)
@@ -218,10 +219,10 @@ def getallsites():
     #         d['state'] = row[3]
     #         d['created_date'] = row[4]
     #         d['updated_date'] = row[5]
-    #         d['error_code'] = row[6]
+    #         d['code'] = row[6]
     #         d['error_message'] = row[6]
     #         d['ipaddress'] = row[8]
-    #         # d['error_code'] = row[4]
+    #         # d['code'] = row[4]
     #         rowarray_list.append(d)
     #     response = jsonify(rowarray_list)
     #     print(response)

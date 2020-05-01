@@ -6,7 +6,7 @@ import collections
 import time
 
 
-# ALTER TABLE sites_collection ADD packet_transmit int(10),ADD packet_receive int(10),ADD packet_loss_count int(10),ADD packet_loss_rate int(10),ADD rtt_min int(10),ADD rtt_avg int(10),ADD rtt_max int(10),ADD rtt_mdev int(10);
+# ALTER TABLE sites_collection ADD packet_transmit int(10),ADD packet_receive int(10),ADD packet_loss_count int(10),ADD packet_loss_rate int(10),ADD rtt_min int(10),ADD rtt_avg int(10),ADD "rtt_max" int(10),ADD rtt_mdev int(10);
 # Create table sites_collection(id int NOT NULL AUTO_INCREMENT, dns_name varchar(128), status varchar(20), state varchar(20), created_date DATE, updated_date DATE, code int, error_message varchar(200), ipaddress varchar(200), PRIMARY KEY(id));
 # Create table sites_collection(id int NOT NULL AUTO_INCREMENT, dns_name varchar(128), status varchar(150), state varchar(150), created_date varchar(150), updated_date varchar(150), code varchar(150), error_message varchar(200), ipaddress varchar(200), PRIMARY KEY(id));
 # def createTable():
@@ -28,14 +28,23 @@ def addSiteName():
         _errorcode = _json['code']
         _errormsg = _json['error_message']
         _ipaddress = _json['ipaddress']
-
+        _packettransmit = _json['packet_transmit']
+        _packerreceive = _json['packet_receive']
+        _packetlosscount = _json['packet_loss_count']
+        _packetlossrate = _json['packet_loss_rate']
+        _rttmin = _json['rtt_min']
+        _rttmax = _json['rtt_max']
+        _rttavg = _json['rtt_avg']
+        _rttmdev = _json['rtt_mdev']
         _createddate = time.time()
         _updateddate = time.time()
         _state = "active"
         # if _dnsname and _status and _state and _createddate and _updateddate and _errorcode and _errormsg and _ipaddress and request.method == 'POST':
         if _dnsname and request.method == 'POST':
-            sqlQuery = "INSERT INTO sites_collection(dns_name, status, state, created_date, updated_date, code, error_message, ipaddress) VALUES(%s, %s, %s, %s, %s, %s, %s, %s);"
-            bindData = (_dnsname, _status, _state, _createddate, _updateddate, _errorcode, _errormsg, _ipaddress)
+            # sqlQuery = "INSERT INTO sites_collection(dns_name, status, state, created_date, updated_date, code, error_message, ipaddress, packet_transmit, packet_receive, packet_loss_count, packet_loss_rate, rtt_min, rtt_max, rtt_avg, rtt_mdev) VALUES(%s,%s,%s,%s,%s,%s,%s,%s);"
+            sqlQuery = "INSERT INTO sites_collection(dns_name, status, state, created_date, updated_date, code, error_message, ipaddress, packet_transmit, packet_receive, packet_loss_count, packet_loss_rate, rtt_min, rtt_max, rtt_avg, rtt_mdev) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+            # sqlQuery = "INSERT INTO sites_collection(dns_name, status, state, created_date, updated_date, code, error_message, ipaddress, packet_transmit, packet_receive, packet_loss_count, packet_loss_rate, rtt_min, rtt_max, rtt_avg, rtt_mdev) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+            bindData = (_dnsname, _status, _state, _createddate, _updateddate, _errorcode, _errormsg, _ipaddress,_packettransmit, _packerreceive, _packetlosscount, _packetlossrate , _rttmin , _rttmax,_rttavg, _rttmdev)
             conn = server.mysqlConnection('shubham')
             cursor = conn.cursor()
             cursor.execute(sqlQuery, bindData)
@@ -69,9 +78,17 @@ def showAllsites():
             d['state'] = row[3]
             d['created_date'] = row[4]
             d['updated_date'] = row[5]
-            d['code'] = row[6]
             d['error_message'] = row[6]
-            d['ipaddress'] = row[8]
+            d['ipaddress'] = row[7]
+            d['rtt_min'] = row[8]
+            d['rtt_avg'] = row[9]
+            d['rtt_max'] = row[10]
+            d['rtt_mdev'] = row[11]
+            d['packet_transmit'] = row[12]
+            d['packet_receive'] = row[13]
+            d['packet_loss_count'] = row[14]
+            d['packet_loss_rate'] = row[15]
+            d['code'] = row[16]
             # d['code'] = row[4]
             rowarray_list.append(d)
         response = jsonify(rowarray_list)

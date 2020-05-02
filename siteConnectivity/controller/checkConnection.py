@@ -3,6 +3,14 @@ import collections
 import json
 import pingparsing
 import time
+import logging
+from logging.handlers import TimedRotatingFileHandler
+loglocation = "/home/shubham/Shubham/Self Projects/Project/siteConnectivity/controller/"
+handler = TimedRotatingFileHandler(loglocation+'checkConnection.log', when="s", interval=5)
+handler.suffix = "%Y-%m-%d_%H-%M-%S"
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
 
 def siteConnection():
     conn = server.mysqlConnection('shubham')
@@ -39,7 +47,7 @@ def checkConnection():
         ping_parser = pingparsing.PingParsing()
         transmitter = pingparsing.PingTransmitter()
         transmitter.destination = list_of_connection[i]
-        transmitter.count = 1
+        transmitter.count = 3
         result = transmitter.ping()
 
         jsonresult = json.dumps(ping_parser.parse(result).as_dict(), indent=4)
@@ -58,6 +66,7 @@ def updateConnectioninDB(list_of_connection,parsed_json):
         cursor = conn.cursor()
         cursor.execute(sqlQuery)
         conn.commit()
+        logger.error("Entry update in sites_collection function:updateConnectioninDB, filename:checkConnection " +updation_time + " value: " + list_of_connection)
         return("success")
     else:
         packet_transmit_count = str(parsed_json['packet_transmit'])
@@ -94,7 +103,7 @@ def updateConnectioninDB(list_of_connection,parsed_json):
             cursor = conn.cursor()
             cursor.execute(sqlQuery)
             conn.commit()
-
+        logger.info("Entry update in sites_collection function:updateConnectioninDB, filename:checkConnection " +updation_time + " value: " + parsed_json['destination'])
         return("success")
 
 
